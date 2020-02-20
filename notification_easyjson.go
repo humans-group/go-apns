@@ -325,15 +325,7 @@ func easyjson9806e1DecodeGithubComHumansNetApns2(in *jlexer.Lexer, out *APS) {
 		case "alert":
 			(out.Alert).UnmarshalEasyJSON(in)
 		case "badge":
-			if in.IsNull() {
-				in.Skip()
-				out.Badge = nil
-			} else {
-				if out.Badge == nil {
-					out.Badge = new(int)
-				}
-				*out.Badge = int(in.Int())
-			}
+			out.Badge = int(in.Int())
 		case "sound":
 			out.Sound = string(in.String())
 		case "content-available":
@@ -362,7 +354,7 @@ func easyjson9806e1EncodeGithubComHumansNetApns2(out *jwriter.Writer, in APS) {
 		out.RawString(prefix[1:])
 		(in.Alert).MarshalEasyJSON(out)
 	}
-	if in.Badge != nil {
+	if in.Badge != 0 {
 		const prefix string = ",\"badge\":"
 		if first {
 			first = false
@@ -370,7 +362,7 @@ func easyjson9806e1EncodeGithubComHumansNetApns2(out *jwriter.Writer, in APS) {
 		} else {
 			out.RawString(prefix)
 		}
-		out.Int(int(*in.Badge))
+		out.Int(int(in.Badge))
 	}
 	if in.Sound != "" {
 		const prefix string = ",\"sound\":"

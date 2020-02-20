@@ -123,7 +123,7 @@ type APS struct {
 	Alert Alert `json:"alert,omitempty"`
 
 	// Badge to display on the app icon.
-	Badge *int `json:"badge,omitempty"`
+	Badge int `json:"badge,omitempty"`
 
 	// Sound is the name of a sound file to play as an alert.
 	Sound string `json:"sound,omitempty"`
