@@ -29,7 +29,7 @@ type SimpleClient struct {
 }
 
 // NewClient creates new APNS client based on defined Options.
-func NewClient(opts ...ClientOption) (*SimpleClient, error) {
+func NewClient(opts ...ClientOption) *SimpleClient {
 	c := &SimpleClient{
 		http: &http.Client{
 			Transport: &http.Transport{},
@@ -38,16 +38,16 @@ func NewClient(opts ...ClientOption) (*SimpleClient, error) {
 	}
 	for _, o := range opts {
 		if err := o(c); err != nil {
-			return nil, err
+			panic(fmt.Sprintf("failed to apply opt: %v", err))
 		}
 	}
 	c.endpoint = fmt.Sprintf("%s/3/device/", c.endpoint)
 
 	if err := http2.ConfigureTransport(c.http.Transport.(*http.Transport)); err != nil {
-		return nil, err
+		panic(fmt.Sprintf("failed to configure http2 transport: %v", err))
 	}
 
-	return c, nil
+	return c
 }
 
 // Send sends Notification to the APN service.
