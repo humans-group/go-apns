@@ -32,7 +32,7 @@ type SimpleClient struct {
 func NewClient(opts ...ClientOption) *SimpleClient {
 	c := &SimpleClient{
 		http: &http.Client{
-			Transport: &http.Transport{},
+			Transport: &http2.Transport{},
 		},
 		endpoint: ProductionGateway,
 	}
@@ -42,10 +42,6 @@ func NewClient(opts ...ClientOption) *SimpleClient {
 		}
 	}
 	c.endpoint = fmt.Sprintf("%s/3/device/", c.endpoint)
-
-	if err := http2.ConfigureTransport(c.http.Transport.(*http.Transport)); err != nil {
-		panic(fmt.Sprintf("failed to configure http2 transport: %v", err))
-	}
 
 	return c
 }

@@ -5,6 +5,8 @@ import (
 	"errors"
 	"net/http"
 	"time"
+
+	"golang.org/x/net/http2"
 )
 
 // ClientOption defines athe APNS SimpleClient option.
@@ -35,7 +37,7 @@ func WithCertificate(crt tls.Certificate) ClientOption {
 			Certificates: []tls.Certificate{crt},
 		}
 		config.BuildNameToCertificate()
-		c.http.Transport.(*http.Transport).TLSClientConfig = config
+		c.http.Transport.(*http2.Transport).TLSClientConfig = config
 		return nil
 	}
 }
