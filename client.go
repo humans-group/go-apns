@@ -3,8 +3,8 @@ package apns
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/pkg/errors"
@@ -88,18 +88,22 @@ func (c *SimpleClient) do(req *http.Request) error {
 	}
 	defer resp.Body.Close()
 
-	rawResp := new(RawResp)
+	if resp.StatusCode == http.StatusOK {
+		return nil
+	}
 
-	if err := json.NewDecoder(resp.Body).Decode(rawResp); err != nil {
-		return errors.Wrap(err, "failed to decode response")
+	respBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return errors.Wrapf(err, "failed to read full response body %s", string(respBytes))
+	}
+
+	rawResp := new(RawResp)
+	if err := rawResp.UnmarshalJSON(respBytes); err != nil {
+		return errors.Wrapf(err, "failed to unmarshal response %s", string(respBytes))
 	}
 
 	if rawResp.Reason != "" {
-		if err, ok := errorsMapping[rawResp.Reason]; ok {
-			return err
-		} else {
-			return errors.Errorf("unknown error with apns reason %s", rawResp.Reason)
-		}
+		errors.New(rawResp.Reason)
 	}
 
 	return nil
