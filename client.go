@@ -20,7 +20,7 @@ type Client interface {
 	Send(ctx context.Context, n *Notification) error
 }
 
-var _ Client = &SimpleClient{}
+var _ Client = (*SimpleClient)(nil)
 
 // SimpleClient represents the Apple Push Notification Service that you send notifications to.
 type SimpleClient struct {
@@ -41,6 +41,7 @@ func NewClient(opts ...ClientOption) *SimpleClient {
 			panic(fmt.Sprintf("failed to apply opt: %v", err))
 		}
 	}
+
 	c.endpoint = fmt.Sprintf("%s/3/device/", c.endpoint)
 
 	return c
@@ -86,7 +87,7 @@ func (c *SimpleClient) do(req *http.Request) error {
 	if err != nil {
 		return errors.Wrapf(err, "failed to do http request %#v", *req)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode == http.StatusOK {
 		return nil
@@ -103,7 +104,7 @@ func (c *SimpleClient) do(req *http.Request) error {
 	}
 
 	if rawResp.Reason != "" {
-		errors.New(rawResp.Reason)
+		return errors.New(rawResp.Reason)
 	}
 
 	return nil
