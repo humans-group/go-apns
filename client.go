@@ -14,7 +14,14 @@ import (
 const (
 	DevelopmentGateway = "https://api.development.push.apple.com"
 	ProductionGateway  = "https://api.push.apple.com"
+
+	// API errors
+	// https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/handling_notification_responses_from_apns
+	errReasonExpiredProviderToken = "ExpiredProviderToken"
 )
+
+// Error when the token is stale and a new token should be generated.
+var ErrExpiredToken = errors.New(errReasonExpiredProviderToken)
 
 type Client interface {
 	Send(ctx context.Context, n *Notification) error
@@ -103,11 +110,7 @@ func (c *SimpleClient) do(req *http.Request) error {
 		return errors.Wrapf(err, "failed to unmarshal response %s", string(respBytes))
 	}
 
-	if rawResp.Reason != "" {
-		return errors.New(rawResp.Reason)
-	}
-
-	return nil
+	return apiErrorReasonToClientError(rawResp.Reason)
 }
 
 func setHeaders(r *http.Request, n *Notification) {
@@ -131,5 +134,19 @@ func setHeaders(r *http.Request, n *Notification) {
 		r.Header.Set("apns-push-type", string(n.PushType))
 	} else {
 		r.Header.Set("apns-push-type", string(PushTypeAlert))
+	}
+}
+
+// Map API error reason to client error if there is a reason.
+func apiErrorReasonToClientError(reason string) error {
+	if reason == "" {
+		return nil
+	}
+
+	switch reason {
+	case errReasonExpiredProviderToken:
+		return ErrExpiredToken
+	default:
+		return errors.New(reason)
 	}
 }
