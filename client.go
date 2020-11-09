@@ -139,11 +139,9 @@ func setHeaders(r *http.Request, n *Notification) {
 
 // Map API error reason to client error if there is a reason.
 func apiErrorReasonToClientError(reason string) error {
-	if reason == "" {
-		return nil
-	}
-
 	switch reason {
+	case "":
+		return nil
 	case errReasonExpiredProviderToken:
 		return ErrExpiredToken
 	default:
