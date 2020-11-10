@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-  <testsuite name="GoApns" tests="3" failures="0" errors="0" time="0">
-      <testcase name="Client input validation when errorReason is empty should succeed" classname="GoApns" time="1.0548e-05"></testcase>
-      <testcase name="Client input validation when errorReason is  should succeed" classname="GoApns" time="9.1e-06"></testcase>
-      <testcase name="Client input validation when errorReason empty should succeed" classname="GoApns" time="9.23e-07"></testcase>
-  </testsuite>
