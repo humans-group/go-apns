@@ -17,7 +17,7 @@ var (
 	_ easyjson.Marshaler
 )
 
-func easyjson6ff3ac1dDecodeGithubComHumansNetApns(in *jlexer.Lexer, out *RawResp) {
+func easyjsonC1cedd36DecodeGithubComHumansNetApns(in *jlexer.Lexer, out *RawResp) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -37,7 +37,7 @@ func easyjson6ff3ac1dDecodeGithubComHumansNetApns(in *jlexer.Lexer, out *RawResp
 		}
 		switch key {
 		case "reason":
-			out.Reason = string(in.String())
+			out.Reason = ErrorReason(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -48,7 +48,7 @@ func easyjson6ff3ac1dDecodeGithubComHumansNetApns(in *jlexer.Lexer, out *RawResp
 		in.Consumed()
 	}
 }
-func easyjson6ff3ac1dEncodeGithubComHumansNetApns(out *jwriter.Writer, in RawResp) {
+func easyjsonC1cedd36EncodeGithubComHumansNetApns(out *jwriter.Writer, in RawResp) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -63,23 +63,23 @@ func easyjson6ff3ac1dEncodeGithubComHumansNetApns(out *jwriter.Writer, in RawRes
 // MarshalJSON supports json.Marshaler interface
 func (v RawResp) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6ff3ac1dEncodeGithubComHumansNetApns(&w, v)
+	easyjsonC1cedd36EncodeGithubComHumansNetApns(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v RawResp) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6ff3ac1dEncodeGithubComHumansNetApns(w, v)
+	easyjsonC1cedd36EncodeGithubComHumansNetApns(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *RawResp) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6ff3ac1dDecodeGithubComHumansNetApns(&r, v)
+	easyjsonC1cedd36DecodeGithubComHumansNetApns(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *RawResp) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6ff3ac1dDecodeGithubComHumansNetApns(l, v)
+	easyjsonC1cedd36DecodeGithubComHumansNetApns(l, v)
 }

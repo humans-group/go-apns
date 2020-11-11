@@ -7,7 +7,7 @@ import (
 
 var _ = Describe("Client", func() {
 	Context("apiErrorReasonToClientError func", func() {
-		var errorReason string
+		var errorReason ErrorReason
 
 		When("error reason is empty", func() {
 			It("should succeed", func() {
@@ -19,7 +19,7 @@ var _ = Describe("Client", func() {
 
 		When("error reason is ExpiredProviderToken", func() {
 			It("should return ErrExpiredToken", func() {
-				errorReason = errReasonExpiredProviderToken
+				errorReason = reasonExpiredProviderToken
 				err := apiErrorReasonToClientError(errorReason)
 				Ω(err).Should(Equal(ErrExpiredToken))
 			})
@@ -29,7 +29,8 @@ var _ = Describe("Client", func() {
 			It("should return Error", func() {
 				errorReason = "anyOtherError"
 				err := apiErrorReasonToClientError(errorReason)
-				Ω(err).Should(Equal(Error(errorReason)))
+				Ω(err).Should(HaveOccurred())
+				Ω(err.Error()).Should(Equal(string(errorReason)))
 			})
 		})
 	})
