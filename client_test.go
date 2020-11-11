@@ -7,7 +7,7 @@ import (
 
 var _ = Describe("Client", func() {
 	Context("apiErrorReasonToClientError func", func() {
-		var errorReason ErrorReason
+		var errorReason errorReason
 
 		When("error reason is empty", func() {
 			It("should succeed", func() {
