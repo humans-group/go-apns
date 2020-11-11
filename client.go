@@ -98,16 +98,12 @@ func (c *SimpleClient) do(req *http.Request) error {
 		return errors.Wrapf(err, "failed to read full response body %s", string(respBytes))
 	}
 
-	rawResp := new(RawResp)
+	rawResp := new(rawResp)
 	if err := rawResp.UnmarshalJSON(respBytes); err != nil {
 		return errors.Wrapf(err, "failed to unmarshal response %s", string(respBytes))
 	}
 
-	if rawResp.Reason != "" {
-		return errors.New(rawResp.Reason)
-	}
-
-	return nil
+	return apiErrorReasonToClientError(rawResp.Reason)
 }
 
 func setHeaders(r *http.Request, n *Notification) {
@@ -131,5 +127,17 @@ func setHeaders(r *http.Request, n *Notification) {
 		r.Header.Set("apns-push-type", string(n.PushType))
 	} else {
 		r.Header.Set("apns-push-type", string(PushTypeAlert))
+	}
+}
+
+// Map API error reason to client error if there is a reason.
+func apiErrorReasonToClientError(reason errorReason) error {
+	switch reason {
+	case "":
+		return nil
+	case reasonExpiredProviderToken:
+		return ErrExpiredToken
+	default:
+		return errors.New(string(reason))
 	}
 }
