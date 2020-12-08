@@ -138,8 +138,6 @@ type APS struct {
 
 	// MutableContent presents the flag that lets user’s device know
 	// that is should run the corresponding service app extension (if the value equals 1).
-	// This extension handles pushes and confirms notifications
-	// by sending a request to Humans Core API.
 	MutableContent int `json:"mutable-content,omitempty"`
 }
 
