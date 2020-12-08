@@ -137,7 +137,7 @@ type APS struct {
 	ThreadID string `json:"thread-id,omitempty"`
 
 	// MutableContent presents the flag that lets user’s device know
-	// that is should run the corresponding service app extension (if the value equals 1).
+	// that it should run the corresponding service app extension (if the value equals 1).
 	MutableContent int `json:"mutable-content,omitempty"`
 }
 
