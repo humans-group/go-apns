@@ -57,7 +57,6 @@ type Notification struct {
 	// default an apns-push-type header with value 'alert' will be added to the
 	// http request.
 	PushType PushType
-
 }
 
 // PushType defines the value for the apns-push-type header
@@ -112,7 +111,7 @@ const (
 // Payload repsresents a data structure for APN notification.
 // easyjson:json
 type Payload struct {
-	APS  APS `json:"aps"`
+	APS  APS             `json:"aps"`
 	Data json.RawMessage `json:"data"`
 }
 
@@ -136,6 +135,10 @@ type APS struct {
 
 	// ThreadID presents the app-specific identifier for grouping notifications.
 	ThreadID string `json:"thread-id,omitempty"`
+
+	// MutableContent presents the flag that lets user’s device know
+	// that it should run the corresponding service app extension (if the value equals 1).
+	MutableContent int `json:"mutable-content,omitempty"`
 }
 
 // Alert represents alert dictionary.
