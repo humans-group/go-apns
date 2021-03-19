@@ -25,6 +25,14 @@ var _ = Describe("Client", func() {
 			})
 		})
 
+		When("error reason is reasonBadDeviceToken", func() {
+			It("should return ErrBadDeviceToken", func() {
+				errorReason = reasonBadDeviceToken
+				err := apiErrorReasonToClientError(errorReason)
+				Ω(err).Should(Equal(ErrBadDeviceToken))
+			})
+		})
+
 		When("error reason is general error", func() {
 			It("should return Error", func() {
 				errorReason = "anyOtherError"
