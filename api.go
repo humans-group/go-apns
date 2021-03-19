@@ -10,3 +10,4 @@ type rawResp struct {
 type errorReason string
 
 const reasonExpiredProviderToken errorReason = "ExpiredProviderToken"
+const reasonBadDeviceToken errorReason = "BadDeviceToken"

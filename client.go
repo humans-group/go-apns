@@ -137,6 +137,8 @@ func apiErrorReasonToClientError(reason errorReason) error {
 		return nil
 	case reasonExpiredProviderToken:
 		return ErrExpiredToken
+	case reasonBadDeviceToken:
+		return ErrBadDeviceToken
 	default:
 		return errors.New(string(reason))
 	}
