@@ -12,5 +12,5 @@ type errorReason string
 const (
 	reasonExpiredProviderToken errorReason = "ExpiredProviderToken"
 	reasonBadDeviceToken       errorReason = "BadDeviceToken"
-	reasonCodeUnregistered     errorReason = "UNREGISTERED"
+	reasonCodeUnregistered     errorReason = "Unregistered"
 )
