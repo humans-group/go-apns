@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// easyjson:json
 type Notification struct {
 	// An optional canonical UUID that identifies the notification. The
 	// canonical form is 32 lowercase hexadecimal digits, displayed in five
