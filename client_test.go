@@ -33,6 +33,14 @@ var _ = Describe("Client", func() {
 			})
 		})
 
+		When("error reason is reasonCodeUnregistered", func() {
+			It("should return ErrUnregistered", func() {
+				errorReason = reasonCodeUnregistered
+				err := apiErrorReasonToClientError(errorReason)
+				Ω(err).Should(Equal(ErrUnregistered))
+			})
+		})
+
 		When("error reason is general error", func() {
 			It("should return Error", func() {
 				errorReason = "anyOtherError"
