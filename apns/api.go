@@ -5,7 +5,6 @@ import (
 	"time"
 )
 
-// easyjson:json
 type Notification struct {
 	// An optional canonical UUID that identifies the notification. The
 	// canonical form is 32 lowercase hexadecimal digits, displayed in five
@@ -154,3 +153,18 @@ type Alert struct {
 	LocArgs      []string `json:"loc-args,omitempty"`
 	LaunchImage  string   `json:"launch-image,omitempty"`
 }
+
+// easyjson:json
+type Response struct {
+	Reason ErrorReason `json:"reason"`
+}
+
+// ErrorReason API error reasons
+// https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/handling_notification_responses_from_apns
+type ErrorReason string
+
+const (
+	ReasonExpiredProviderToken ErrorReason = "ExpiredProviderToken"
+	ReasonBadDeviceToken       ErrorReason = "BadDeviceToken"
+	ReasonCodeUnregistered     ErrorReason = "Unregistered"
+)

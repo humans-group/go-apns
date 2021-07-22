@@ -7,7 +7,7 @@ import (
 
 var _ = Describe("Client", func() {
 	Context("apiErrorReasonToClientError func", func() {
-		var errorReason errorReason
+		var errorReason ErrorReason
 
 		When("error reason is empty", func() {
 			It("should succeed", func() {
@@ -19,7 +19,7 @@ var _ = Describe("Client", func() {
 
 		When("error reason is ExpiredProviderToken", func() {
 			It("should return ErrExpiredToken", func() {
-				errorReason = reasonExpiredProviderToken
+				errorReason = ReasonExpiredProviderToken
 				err := apiErrorReasonToClientError(errorReason)
 				Ω(err).Should(Equal(ErrExpiredToken))
 			})
@@ -27,7 +27,7 @@ var _ = Describe("Client", func() {
 
 		When("error reason is reasonBadDeviceToken", func() {
 			It("should return ErrBadDeviceToken", func() {
-				errorReason = reasonBadDeviceToken
+				errorReason = ReasonBadDeviceToken
 				err := apiErrorReasonToClientError(errorReason)
 				Ω(err).Should(Equal(ErrBadDeviceToken))
 			})
@@ -35,7 +35,7 @@ var _ = Describe("Client", func() {
 
 		When("error reason is reasonCodeUnregistered", func() {
 			It("should return ErrUnregistered", func() {
-				errorReason = reasonCodeUnregistered
+				errorReason = ReasonCodeUnregistered
 				err := apiErrorReasonToClientError(errorReason)
 				Ω(err).Should(Equal(ErrUnregistered))
 			})

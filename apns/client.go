@@ -3,22 +3,12 @@ package apns
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 
-	"github.com/pkg/errors"
 	"golang.org/x/net/http2"
 )
-
-const (
-	DevelopmentGateway = "https://api.development.push.apple.com"
-	ProductionGateway  = "https://api.push.apple.com"
-)
-
-type Client interface {
-	Send(ctx context.Context, n *Notification) error
-}
 
 var _ Client = (*SimpleClient)(nil)
 
@@ -28,8 +18,8 @@ type SimpleClient struct {
 	endpoint string
 }
 
-// NewClient creates new APNS client based on defined Options.
-func NewClient(opts ...ClientOption) *SimpleClient {
+// MustNewClient creates new APNS client based on defined Options.
+func MustNewClient(opts ...ClientOption) *SimpleClient {
 	c := &SimpleClient{
 		http: &http.Client{
 			Transport: &http2.Transport{},
@@ -51,25 +41,21 @@ func NewClient(opts ...ClientOption) *SimpleClient {
 func (c *SimpleClient) Send(ctx context.Context, n *Notification) error {
 	req, err := c.prepareRequest(ctx, n)
 	if err != nil {
-		return errors.Wrap(err, "failed to prepare http req")
+		return fmt.Errorf("prepare request: %w", err)
 	}
 
-	if err := c.do(req); err != nil {
-		return errors.Wrap(err, "failed to do http request")
-	}
-
-	return nil
+	return c.do(req)
 }
 
 func (c *SimpleClient) prepareRequest(ctx context.Context, n *Notification) (*http.Request, error) {
 	data, err := n.Payload.MarshalJSON()
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to marshal notification payload %#v", n)
+		return nil, fmt.Errorf("marshal payload json: %w", err)
 	}
 
 	req, err := http.NewRequestWithContext(
 		ctx,
-		"POST",
+		http.MethodPost,
 		c.endpoint+n.DeviceToken,
 		bytes.NewBuffer(data),
 	)
@@ -83,65 +69,53 @@ func (c *SimpleClient) prepareRequest(ctx context.Context, n *Notification) (*ht
 }
 
 func (c *SimpleClient) do(req *http.Request) error {
-	resp, err := c.http.Do(req)
+	httpResp, err := c.http.Do(req)
 	if err != nil {
-		return errors.Wrapf(err, "failed to do http request %#v", *req)
+		return fmt.Errorf("do request: %w", err)
 	}
-	defer func() { _ = resp.Body.Close() }()
+	defer func() { _ = httpResp.Body.Close() }()
 
-	if resp.StatusCode == http.StatusOK {
+	if httpResp.StatusCode == http.StatusOK {
 		return nil
 	}
 
-	respBytes, err := ioutil.ReadAll(resp.Body)
+	var resp Response
+	err = json.
+		NewDecoder(httpResp.Body).
+		Decode(&resp)
 	if err != nil {
-		return errors.Wrapf(err, "failed to read full response body %s", string(respBytes))
+		return fmt.Errorf("decode response: %w", err)
 	}
 
-	rawResp := new(rawResp)
-	if err := rawResp.UnmarshalJSON(respBytes); err != nil {
-		return errors.Wrapf(err, "failed to unmarshal response %s", string(respBytes))
-	}
-
-	return apiErrorReasonToClientError(rawResp.Reason)
+	return apiErrorReasonToClientError(resp.Reason)
 }
 
 func setHeaders(r *http.Request, n *Notification) {
 	r.Header.Set("Content-Type", "application/json; charset=utf-8")
+
 	if n.Topic != "" {
 		r.Header.Set("apns-topic", n.Topic)
 	}
+
 	if n.ApnsID != "" {
 		r.Header.Set("apns-id", n.ApnsID)
 	}
+
 	if n.CollapseID != "" {
 		r.Header.Set("apns-collapse-id", n.CollapseID)
 	}
+
 	if n.Priority > 0 {
 		r.Header.Set("apns-priority", fmt.Sprintf("%v", n.Priority))
 	}
+
 	if !n.Expiration.IsZero() {
 		r.Header.Set("apns-expiration", fmt.Sprintf("%v", n.Expiration.Unix()))
 	}
+
 	if n.PushType != "" {
 		r.Header.Set("apns-push-type", string(n.PushType))
 	} else {
 		r.Header.Set("apns-push-type", string(PushTypeAlert))
-	}
-}
-
-// Map API error reason to client error if there is a reason.
-func apiErrorReasonToClientError(reason errorReason) error {
-	switch reason {
-	case "":
-		return nil
-	case reasonExpiredProviderToken:
-		return ErrExpiredToken
-	case reasonBadDeviceToken:
-		return ErrBadDeviceToken
-	case reasonCodeUnregistered:
-		return ErrUnregistered
-	default:
-		return errors.New(string(reason))
 	}
 }
