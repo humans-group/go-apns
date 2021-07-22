@@ -10,6 +10,6 @@ import (
 
 func TestHttpClient(t *testing.T) {
 	RegisterFailHandler(Fail)
-	junitReporter := reporters.NewJUnitReporter("GoApns.xml")
-	RunSpecsWithDefaultAndCustomReporters(t, "GoApns", []Reporter{junitReporter})
+	junitReporter := reporters.NewJUnitReporter("test.xml")
+	RunSpecsWithDefaultAndCustomReporters(t, "APNs Package", []Reporter{junitReporter})
 }

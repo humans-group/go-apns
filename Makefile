@@ -1,3 +1,3 @@
 gen:
-	easyjson notification.go api.go
-	minimock -g -i Client -o ./ -s _mock.go
+	easyjson apns/api.go
+	minimock -g -i ./apns.Client -o ./apns/ -s _mock.go
