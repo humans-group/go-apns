@@ -1,11 +1,9 @@
 package apns
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
-	"github.com/sideshow/apns2/token"
 	"golang.org/x/net/http2"
 )
 
@@ -39,9 +37,9 @@ func WithTimeout(t time.Duration) ClientOption {
 // WithJWTAuthorization enables JWT authorization for apns requests.
 func WithJWTAuthorization(cfg JWTConfig) ClientOption {
 	return func(c *SimpleClient) error {
-		authKey, err := token.AuthKeyFromBytes(cfg.AuthKey)
+		authToken, err := NewToken(cfg.AuthKey, cfg.KeyID, cfg.TeamID)
 		if err != nil {
-			return fmt.Errorf("parse auth key: %w", err)
+			return err
 		}
 
 		parent := c.http.Transport
@@ -51,11 +49,7 @@ func WithJWTAuthorization(cfg JWTConfig) ClientOption {
 
 		c.http.Transport = &RoundTripperJWTDecorator{
 			Parent: parent,
-			Token: &token.Token{
-				AuthKey: authKey,
-				KeyID:   cfg.KeyID,
-				TeamID:  cfg.TeamID,
-			},
+			Token:  authToken,
 		}
 		return nil
 	}
