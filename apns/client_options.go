@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/sideshow/apns2/token"
+	"golang.org/x/net/http2"
 )
 
 // ClientOption defines athe APNS SimpleClient option.
@@ -43,8 +44,13 @@ func WithJWTAuthorization(cfg JWTConfig) ClientOption {
 			return fmt.Errorf("parse auth key: %w", err)
 		}
 
+		parent := c.http.Transport
+		if parent == nil {
+			parent = &http2.Transport{}
+		}
+
 		c.http.Transport = &RoundTripperJWTDecorator{
-			Parent: c.http.Transport,
+			Parent: parent,
 			Token: &token.Token{
 				AuthKey: authKey,
 				KeyID:   cfg.KeyID,
