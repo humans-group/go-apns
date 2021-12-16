@@ -1,4 +1,4 @@
-module github.com/humans-net/go-apns
+module github.com/humans-group/pq
 
 go 1.17
 
