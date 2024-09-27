@@ -8,7 +8,7 @@ require (
 	github.com/onsi/ginkgo v1.14.2
 	github.com/onsi/gomega v1.10.3
 	github.com/sideshow/apns2 v0.20.0
-	golang.org/x/net v0.25.0
+	golang.org/x/net v0.29.0
 )
 
 require (
