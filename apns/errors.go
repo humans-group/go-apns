@@ -28,6 +28,6 @@ func apiErrorReasonToClientError(reason ErrorReason) error {
 	case ReasonCodeUnregistered:
 		return ErrUnregistered
 	default:
-		return fmt.Errorf(string(reason))
+		return fmt.Errorf("%s", string(reason))
 	}
 }
