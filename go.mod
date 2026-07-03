@@ -1,6 +1,6 @@
 module github.com/humans-group/go-apns
 
-go 1.24.0
+go 1.25.0
 
 require (
 	github.com/gojuno/minimock/v3 v3.3.6
@@ -8,7 +8,7 @@ require (
 	github.com/onsi/ginkgo/v2 v2.13.2
 	github.com/onsi/gomega v1.30.0
 	github.com/sideshow/apns2 v0.24.0
-	golang.org/x/net v0.49.0
+	golang.org/x/net v0.55.0
 )
 
 require (
@@ -21,8 +21,8 @@ require (
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	golang.org/x/sys v0.40.0 // indirect
-	golang.org/x/text v0.33.0 // indirect
-	golang.org/x/tools v0.40.0 // indirect
+	golang.org/x/sys v0.45.0 // indirect
+	golang.org/x/text v0.37.0 // indirect
+	golang.org/x/tools v0.44.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
